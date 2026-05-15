@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import "leaflet/dist/leaflet.css";
-import { LCircle, LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
+import { LCircle, LMap, LPopup, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { onMounted, type Ref, ref } from "vue";
 import { type ParsedNOTAM, parseNOTAMs } from "@/composables/useNOTAMParser.ts";
 
@@ -33,7 +33,11 @@ onMounted(async () => {
                 :radius="notam.radiusInMetres"
                 :color="'#FF0000'"
                 :fill-opacity="0.2"
-            />
+            >
+                <l-popup>
+                    {{ notam.itemE }}
+                </l-popup>
+            </l-circle>
         </l-map>
     </div>
 </template>

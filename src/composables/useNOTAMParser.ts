@@ -2,7 +2,8 @@ export interface ParsedNOTAM {
     number: string,
     latitude: number,
     longitude: number,
-    radiusInMetres: number
+    radiusInMetres: number,
+    itemE: string
 }
 
 function parseCoordinates(coordinates: string): {latitude: number, longitude: number} {
@@ -57,7 +58,8 @@ export function parseNOTAMs(document: Document): ParsedNOTAM[] {
             number: getText("Number"),
             latitude,
             longitude,
-            radiusInMetres
+            radiusInMetres,
+            itemE: getText("ItemE")
         }
 
         output.push(currentNOTAM);
