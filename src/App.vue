@@ -5,6 +5,7 @@ import { onMounted, type Ref, ref } from "vue";
 import { type ParsedNOTAM, parseNOTAMs } from "@/composables/useNOTAMParser.ts";
 import AMSLText from "@/components/AMSLText.vue";
 import IndentedBlockText from "@/components/IndentedBlockText.vue";
+import { formatToAviationDate } from "@/composables/useDateFormatter.ts";
 
 const zoom = ref(6);
 const centre = ref([54.5, -2.5]);
@@ -43,7 +44,9 @@ onMounted(async () => {
                         <span v-if="notam.lowerLimit != 0">{{ notam.lowerLimit }}ft <AMSLText /></span>
                         <span v-else>Surface</span>
                     </span>
-                    Upper limit: <span style="font-weight: bold">{{ notam.upperLimit }}ft <AMSLText /></span>
+                    Upper limit: <span style="font-weight: bold">{{ notam.upperLimit }}ft <AMSLText /></span><br />
+                    Start: <span style="font-weight: bold">{{ formatToAviationDate(notam.start) }}</span><br />
+                    End: <span style="font-weight: bold">{{ formatToAviationDate(notam.end) }}</span>
                 </l-popup>
             </l-circle>
         </l-map>

@@ -5,7 +5,9 @@ export interface ParsedNOTAM {
     radiusInMetres: number,
     itemE: string,
     lowerLimit: number,
-    upperLimit: number
+    upperLimit: number,
+    start: Date,
+    end: Date
 }
 
 function parseCoordinates(coordinates: string): {latitude: number, longitude: number} {
@@ -33,6 +35,23 @@ function convertRadiusToMetres(radiusNauticalMiles: number): number {
     return radiusNauticalMiles * METRES_PER_NM;
 }
 
+function twoDigitYearToFullYear(twoDigitYear: string): number {
+    const twoDigitYearNum = parseInt(twoDigitYear);
+
+    const currentYear = new Date().getFullYear().toString();
+    const currentYearLastTwoDigits = parseInt(currentYear.slice(-2));
+    const currentYearFirstTwoDigits = parseInt(currentYear.slice(0, 2));
+
+    let targetYear: number;
+    if (twoDigitYearNum <= currentYearLastTwoDigits) {
+        targetYear = parseInt(currentYearFirstTwoDigits.toString() + twoDigitYear);
+    } else {
+        targetYear = parseInt((currentYearFirstTwoDigits-1).toString() + twoDigitYear);
+    }
+
+    return targetYear;
+}
+
 export function parseNOTAMs(document: Document): ParsedNOTAM[] {
     let output: ParsedNOTAM[] = [];
 
@@ -56,6 +75,24 @@ export function parseNOTAMs(document: Document): ParsedNOTAM[] {
         const {latitude, longitude} = parseCoordinates(coordinatesString);
         const radiusInMetres = convertRadiusToMetres(radius);
 
+        // TODO turn this into a nice function
+        const startString = getText("StartValidity");
+        const startYear = twoDigitYearToFullYear(startString.slice(0, 2));
+        const startMonth = parseInt(startString.slice(2, 4)) - 1;
+        const startDay = parseInt(startString.slice(4, 6));
+        const startHours = parseInt(startString.slice(6, 8));
+        const startMinutes = parseInt(startString.slice(8, 10));
+        const startDate = new Date(startYear, startMonth, startDay, startHours, startMinutes);
+
+        const endString = getText("EndValidity");
+        const endYear = twoDigitYearToFullYear(endString.slice(0, 2));
+        const endMonth = parseInt(endString.slice(2, 4)) - 1;
+        const endDay = parseInt(endString.slice(4, 6));
+        const endHours = parseInt(endString.slice(6, 8));
+        const endMinutes = parseInt(endString.slice(8, 10));
+        console.log(`${endString} ${endYear} ${endMonth} ${endDay} ${endHours} ${endMinutes}`)
+        const endDate = new Date(endYear, endMonth, endDay, endHours, endMinutes);
+
         const currentNOTAM: ParsedNOTAM = {
             number: getText("Number"),
             latitude,
@@ -63,7 +100,9 @@ export function parseNOTAMs(document: Document): ParsedNOTAM[] {
             radiusInMetres,
             itemE: getText("ItemE"),
             lowerLimit: parseInt(getText("Lower")) * 100, // values in feet
-            upperLimit: parseInt(getText("Upper")) * 100 // same as above
+            upperLimit: parseInt(getText("Upper")) * 100, // same as above
+            start: startDate,
+            end: endDate
         }
 
         output.push(currentNOTAM);
