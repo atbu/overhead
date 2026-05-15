@@ -3,6 +3,8 @@ import "leaflet/dist/leaflet.css";
 import { LCircle, LMap, LPopup, LTileLayer } from "@vue-leaflet/vue-leaflet";
 import { onMounted, type Ref, ref } from "vue";
 import { type ParsedNOTAM, parseNOTAMs } from "@/composables/useNOTAMParser.ts";
+import AMSLText from "@/components/AMSLText.vue";
+import IndentedBlockText from "@/components/IndentedBlockText.vue";
 
 const zoom = ref(6);
 const centre = ref([54.5, -2.5]);
@@ -35,7 +37,13 @@ onMounted(async () => {
                 :fill-opacity="0.2"
             >
                 <l-popup>
-                    {{ notam.itemE }}
+                    <IndentedBlockText style="font-family: monospace">{{ notam.itemE }}</IndentedBlockText><br />
+                    Lower limit:
+                    <span style="font-weight: bold">
+                        <span v-if="notam.lowerLimit != 0">{{ notam.lowerLimit }}ft <AMSLText /></span>
+                        <span v-else>Surface</span>
+                    </span>
+                    Upper limit: <span style="font-weight: bold">{{ notam.upperLimit }}ft <AMSLText /></span>
                 </l-popup>
             </l-circle>
         </l-map>
