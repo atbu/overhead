@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const response = await fetch(
+    'https://raw.githubusercontent.com/Jonty/uk-notam-archive/main/data/PIB.xml'
+);
+const text = await response.text();
+const parser = new DOMParser();
+const xml = parser.parseFromString(text, 'application/xml');
+console.log(xml);
+</script>
 
 <template>
     <h1>You did it!</h1>
